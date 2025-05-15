@@ -3,7 +3,7 @@ package package_for_websitemonitor;
 import package_for_websitemonitor.controller.MonitorController;
 import package_for_websitemonitor.model.User;
 
-public class WebsiteMonitor {
+public class Main {
     public static void main(String[] args) {
         MonitorController controller = new MonitorController();
 
