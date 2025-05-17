@@ -1,19 +1,23 @@
 package package_for_websitemonitor;
 
-import package_for_websitemonitor.controller.MonitorController;
 import package_for_websitemonitor.model.User;
+import package_for_websitemonitor.service.NotificationService;
+import package_for_websitemonitor.service.WebsMonitor;
 
 public class Main {
     public static void main(String[] args) {
-        MonitorController controller = new MonitorController();
+       try {
+        NotificationService notificationService = new NotificationService();
+        WebsMonitor monitor = new WebsMonitor(notificationService);
 
-        // Example usage
-        User user1 = new User("votansang253@gmail.com.com", "email");
-        controller.registerUserWebsite(user1, "https://youtube.com", "daily");
+        User user1 = new User("user1@example.com", "email");
+        monitor.registerWebsite(user1, "https://www.wikipedia.org/", "daily");
 
-        User user2 = new User("10422114@student.vgu.edu.vn", "sms");
-        controller.registerUserWebsite(user2, "https://google.com", "weekly");
+        monitor.startMonitoring();
 
-        controller.startMonitoring();
+    } catch (Exception e) {
+        System.err.println("Fatal error: " + e.getMessage());
+        e.printStackTrace();
+    }
     }
 }

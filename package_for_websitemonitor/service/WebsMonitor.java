@@ -1,7 +1,14 @@
 package package_for_websitemonitor.service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,25 +50,77 @@ public class WebsMonitor {
             public void run() {
                 checkWebsitesForUpdates();
             }
-        }, 0, 24 * 60 * 60 * 1000); // Check daily
+        }, 0, 10 * 1000); // Check daily
     }
 
-    private void checkWebsitesForUpdates() {
-        for (WebsiteSubscription sub : subscriptions) {
-            String currentHash = simulateWebsiteFetch(sub.getUrl());
-
-            if (sub.getLastHash() == null) {
-                sub.setLastHash(currentHash);
-            } else if (!sub.getLastHash().equals(currentHash)) {
-                notificationService.sendNotification((User) sub.getUser(),"Website content has changed!", sub.getUrl());
-                sub.setLastHash(currentHash);
+    public void checkWebsitesForUpdates() {
+        System.out.println("Checking websites for updates...");
+        // Ensure the directory exists
+        Path snapshotDir = Path.of("html_snapshots");
+        if (!Files.exists(snapshotDir)) {
+            try {
+                Files.createDirectories(snapshotDir);
+            } catch (IOException e) {
+                System.err.println("Could not create html_snapshots directory: " + e.getMessage());
+                return;
             }
-            sub.setLastChecked(new Date().toString());
+        }
+        for (WebsiteSubscription sub : subscriptions) {
+            System.out.println("Checking: " + sub.getUrl());
+            try {
+                String url = sub.getUrl();
+                String currentFile = "html_snapshots/" + url.hashCode() + "_current.html";
+                String previousFile = "html_snapshots/" + url.hashCode() + "_previous.html";
+
+                // Download current HTML
+                HtmlDownloader.downloadHtmlToFile(url, currentFile);
+
+                // Compare with previous version
+                boolean updated = false;
+                if (Files.exists(Path.of(previousFile))) {
+                    updated = HtmlDownloader.isFileUpdated(previousFile, currentFile);
+                } else {
+                    // First time, treat as updated
+                    updated = true;
+                }
+
+                if (updated) {
+                    System.out.println("Website updated: " + url);
+                    // Optionally, send notification here
+                    Files.copy(Path.of(currentFile), Path.of(previousFile), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                } else {
+                    System.out.println("No changes detected for: " + url);
+                }
+
+                sub.setLastChecked(new java.util.Date().toString());
+
+            } catch (Exception e) {
+                System.err.println("Failed to check " + sub.getUrl() + ": " + e.getMessage());
+            }
         }
     }
 
-    private String simulateWebsiteFetch(String url) {
-        return "simulated-hash-" + System.currentTimeMillis() % 1000;
-    }
+    private String fetchWebsiteContent(String url) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
 
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+    private String generateContentHash(String content) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashBytes = md.digest(content.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return Integer.toString(content.hashCode()); // Fallback
+        }
+    }
 }
