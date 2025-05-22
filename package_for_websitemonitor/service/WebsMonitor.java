@@ -14,15 +14,33 @@ import java.util.Timer;
 import java.util.TimerTask;
 import package_for_websitemonitor.model.User;
 import package_for_websitemonitor.model.WebsiteSubscription;
+import package_for_websitemonitor.observer.Observer;
+import package_for_websitemonitor.observer.Subject;
 
-public class WebsMonitor {
+public class WebsMonitor implements Subject {
     private List<WebsiteSubscription> subscriptions;
-    private NotificationService notificationService;
+    private List<Observer> observers;
     // private Random random = new Random(); // For simulating changes
 
     public WebsMonitor(NotificationService notificationService) {
         this.subscriptions = new ArrayList<>();
-        this.notificationService = notificationService;
+        this.observers = new ArrayList<>();
+    }
+     @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void detach(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String websiteUrl, String message) {
+        for (Observer observer : observers) {
+            observer.update(websiteUrl, message);
+        }
     }
 
     public void registerWebsite(User user, String url, String frequency) {
@@ -86,7 +104,7 @@ public class WebsMonitor {
 
                 if (updated) {
                     System.out.println("Website updated: " + url);
-                    // Optionally, send notification here
+                    notifyObservers(url, "Website updated!");
                     Files.copy(Path.of(currentFile), Path.of(previousFile), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     System.out.println("No changes detected for: " + url);
