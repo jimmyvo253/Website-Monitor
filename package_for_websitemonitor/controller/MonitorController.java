@@ -3,6 +3,7 @@ package package_for_websitemonitor.controller;
 import package_for_websitemonitor.model.User;
 import package_for_websitemonitor.service.NotificationService;
 import package_for_websitemonitor.service.WebsMonitor;
+import package_for_websitemonitor.strategy.*;
 import package_for_websitemonitor.view.MonitorView;
 
 public class MonitorController {
@@ -13,6 +14,20 @@ public class MonitorController {
         NotificationService notificationService = new NotificationService();
         this.monitor = new WebsMonitor(notificationService);
         this.view = new MonitorView();
+    }
+
+    public void setComparisonStrategy(String strategyType) {
+        switch (strategyType.toLowerCase()) {
+            case "size":
+                monitor.setComparisonStrategy(new SizeComparisonStrategy());
+                break;
+            case "text":
+                monitor.setComparisonStrategy(new TextContentComparisonStrategy());
+                break;
+            case "exact":
+            default:
+                monitor.setComparisonStrategy(new ExactHtmlComparisonStrategy());
+        }
     }
 
     public void registerUserWebsite(User user, String url, String frequency) {

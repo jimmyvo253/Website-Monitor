@@ -14,33 +14,37 @@ import java.util.Timer;
 import java.util.TimerTask;
 import package_for_websitemonitor.model.User;
 import package_for_websitemonitor.model.WebsiteSubscription;
-import package_for_websitemonitor.observer.Observer;
-import package_for_websitemonitor.observer.Subject;
+import package_for_websitemonitor.strategy.ExactHtmlComparisonStrategy;
+import package_for_websitemonitor.strategy.WebsiteComparisonStrategy;
 
-public class WebsMonitor implements Subject {
+public class WebsMonitor {
     private List<WebsiteSubscription> subscriptions;
-    private List<Observer> observers;
+    private WebsiteComparisonStrategy comparisonStrategy;
+    // private List<Observer> observers;
     // private Random random = new Random(); // For simulating changes
 
     public WebsMonitor(NotificationService notificationService) {
         this.subscriptions = new ArrayList<>();
-        this.observers = new ArrayList<>();
+        this.comparisonStrategy = new ExactHtmlComparisonStrategy();
     }
-     @Override
-    public void attach(Observer observer) {
-        observers.add(observer);
-    }
+    //  @Override
+    // public void attach(Observer observer) {
+    //     observers.add(observer);
+    // }
 
-    @Override
-    public void detach(Observer observer) {
-        observers.remove(observer);
-    }
+    // @Override
+    // public void detach(Observer observer) {
+    //     observers.remove(observer);
+    // }
 
-    @Override
-    public void notifyObservers(String websiteUrl, String message) {
-        for (Observer observer : observers) {
-            observer.update(websiteUrl, message);
-        }
+    // @Override
+    // public void notifyObservers(String websiteUrl, String message) {
+    //     for (Observer observer : observers) {
+    //         observer.update(websiteUrl, message);
+    //     }
+    // }
+    public void setComparisonStrategy(WebsiteComparisonStrategy strategy) {
+        this.comparisonStrategy = strategy;
     }
 
     public void registerWebsite(User user, String url, String frequency) {
@@ -104,7 +108,7 @@ public class WebsMonitor implements Subject {
 
                 if (updated) {
                     System.out.println("Website updated: " + url);
-                    notifyObservers(url, "Website updated!");
+                    // notifyObservers(url, "Website updated!");
                     Files.copy(Path.of(currentFile), Path.of(previousFile), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     System.out.println("No changes detected for: " + url);
