@@ -19,14 +19,14 @@ public class MonitorController {
     public void setComparisonStrategy(String strategyType) {
         switch (strategyType.toLowerCase()) {
             case "size":
-                monitor.setComparisonStrategy(new SizeComparisonStrategy());
+                monitor.setComparisonStrategy(new SizeComparison());
                 break;
             case "text":
-                monitor.setComparisonStrategy(new TextContentComparisonStrategy());
+                monitor.setComparisonStrategy(new TextContentComparison());
                 break;
             case "exact":
             default:
-                monitor.setComparisonStrategy(new ExactHtmlComparisonStrategy());
+                monitor.setComparisonStrategy(new ExactHtmlComparison());
         }
     }
 

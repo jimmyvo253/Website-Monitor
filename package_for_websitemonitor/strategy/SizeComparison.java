@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 // Strategy 1: Compare file sizes
-public class SizeComparisonStrategy implements WebsiteComparisonStrategy {
+public class SizeComparison implements WebsiteComparison {
     @Override
     public boolean isContentChanged(String currentFile, String previousFile) throws IOException {
         long currentSize = Files.size(Path.of(currentFile));

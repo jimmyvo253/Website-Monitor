@@ -14,18 +14,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 import package_for_websitemonitor.model.User;
 import package_for_websitemonitor.model.WebsiteSubscription;
-import package_for_websitemonitor.strategy.ExactHtmlComparisonStrategy;
-import package_for_websitemonitor.strategy.WebsiteComparisonStrategy;
+import package_for_websitemonitor.strategy.ExactHtmlComparison;
+import package_for_websitemonitor.strategy.WebsiteComparison;
 
 public class WebsMonitor {
     private List<WebsiteSubscription> subscriptions;
-    private WebsiteComparisonStrategy comparisonStrategy;
+    private WebsiteComparison comparisonStrategy;
     // private List<Observer> observers;
     // private Random random = new Random(); // For simulating changes
 
     public WebsMonitor(NotificationService notificationService) {
         this.subscriptions = new ArrayList<>();
-        this.comparisonStrategy = new ExactHtmlComparisonStrategy();
+        this.comparisonStrategy = new ExactHtmlComparison();
     }
     //  @Override
     // public void attach(Observer observer) {
@@ -43,7 +43,7 @@ public class WebsMonitor {
     //         observer.update(websiteUrl, message);
     //     }
     // }
-    public void setComparisonStrategy(WebsiteComparisonStrategy strategy) {
+    public void setComparisonStrategy(WebsiteComparison strategy) {
         this.comparisonStrategy = strategy;
     }
 
