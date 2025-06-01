@@ -13,7 +13,12 @@ public class TextContentComparison implements WebsiteComparison {
     }
 
     private String extractText(String html) {
-        // Simple HTML tag removal - consider using Jsoup for robust parsing
-        return html.replaceAll("<[^>]*>", "").trim();
-    }
+        return html
+            .replaceAll("<!--.*?-->", "")      // Remove comments
+            .replaceAll("<script.*?</script>", "")  // Remove scripts
+            .replaceAll("<style.*?</style>", "")    // Remove CSS
+            .replaceAll("<[^>]*>", "")         // Remove remaining tags
+            .replaceAll("\\s+", " ")           // Normalize whitespace
+            .trim();
+        }
 }

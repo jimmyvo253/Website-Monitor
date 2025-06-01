@@ -23,10 +23,10 @@ public class Main {
        MonitorController controller = new MonitorController();
 
         // Set comparison strategy (can be changed at runtime)
-        controller.setComparisonStrategy("exact"); // Options: "size", "text", or "exact"
+        controller.setComparisonStrategy("text"); // Options: "size", "text", or "exact"
 
         User user = new User("test@example.com", "email");
-        controller.registerUserWebsite(user, "https://ncase.me/trust/", "daily");
+        controller.registerUserWebsite(user, "https://campuas.frankfurt-university.de/pluginfile.php/616131/mod_resource/content/6/SWED_2025_05.pdf", "daily");
         controller.startMonitoring();
 
     } catch (Exception e) {
