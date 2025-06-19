@@ -37,26 +37,57 @@
 //     }
 
 
-package package_for_websitemonitor;
+// package package_for_websitemonitor;
 
+// import package_for_websitemonitor.controller.MonitorController;
+// import package_for_websitemonitor.model.User;
+
+// public class Main {
+//     public static void main(String[] args) {
+//         try {
+//             if (args.length < 1) {
+//                 System.out.println("Usage: java package_for_websitemonitor.Main <website_url>");
+//                 return;
+//             }
+
+//             String website = args[0];  // get URL from command line
+//             System.out.println("Monitoring: " + website);
+
+//             MonitorController controller = new MonitorController();
+
+//             // You can optionally pass comparison strategy via args[1]
+//             controller.setComparisonStrategy("text");
+
+//             User user = new User("test@example.com", "email");
+//             controller.registerUserWebsite(user, website, "daily");
+//             controller.startMonitoring();
+
+//         } catch (Exception e) {
+//             System.err.println("Fatal error: " + e.getMessage());
+//             e.printStackTrace();
+//         }
+//     }
+// }
+
+package package_for_websitemonitor;
 import package_for_websitemonitor.controller.MonitorController;
 import package_for_websitemonitor.model.User;
-
 public class Main {
     public static void main(String[] args) {
         try {
             if (args.length < 1) {
-                System.out.println("Usage: java package_for_websitemonitor.Main <website_url>");
+                System.out.println("Usage: java package_for_websitemonitor.Main <website_url> [comparison_strategy]");
                 return;
             }
 
-            String website = args[0];  // get URL from command line
+            String website = args[0];
+            String strategy = (args.length > 1) ? args[1] : "text"; // Default is "text"
+
             System.out.println("Monitoring: " + website);
+            System.out.println("Using comparison strategy: " + strategy);
 
             MonitorController controller = new MonitorController();
-
-            // You can optionally pass comparison strategy via args[1]
-            controller.setComparisonStrategy("text");
+            controller.setComparisonStrategy(strategy);
 
             User user = new User("test@example.com", "email");
             controller.registerUserWebsite(user, website, "daily");
